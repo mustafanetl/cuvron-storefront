@@ -20,6 +20,11 @@ Copy `.env.example` to `.env` for local development, then set:
 
 If storefront env vars are missing, the app falls back to `mock.shop` so the site can still render for development previews.
 
+Optional Telegram bot env vars:
+
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_WEBHOOK_SECRET`
+
 ## Local development
 
 ```bash
@@ -52,12 +57,27 @@ vercel env add SESSION_SECRET production
 vercel env add PUBLIC_STORE_DOMAIN production
 vercel env add PUBLIC_CHECKOUT_DOMAIN production
 vercel env add PUBLIC_STOREFRONT_API_TOKEN production
+vercel env add TELEGRAM_BOT_TOKEN production
+vercel env add TELEGRAM_WEBHOOK_SECRET production
 ```
 
 Deploy:
 
 ```bash
 vercel --prod
+```
+
+Telegram webhook endpoint:
+
+- `POST /api/telegram-webhook`
+- Optional security header check with `TELEGRAM_WEBHOOK_SECRET` (`x-telegram-bot-api-secret-token`)
+
+After deployment, point your Telegram bot webhook to:
+
+```bash
+curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://<your-vercel-domain>/api/telegram-webhook","secret_token":"<TELEGRAM_WEBHOOK_SECRET>"}'
 ```
 
 ## Shopify production wiring checklist
