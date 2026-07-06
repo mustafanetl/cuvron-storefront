@@ -99,8 +99,15 @@ export default async function handler(req, res) {
   try {
     const url = `https://${req.headers.host}${req.url}`;
     const pathname = new URL(url).pathname;
+    const hasTelegramSecretHeader = Boolean(req.headers['x-telegram-bot-api-secret-token']);
 
-    if (pathname === '/api/telegram-webhook' || pathname === '/api/telegram/webhook') {
+    if (
+      pathname === '/api/telegram-webhook' ||
+      pathname === '/api/telegram/webhook' ||
+      pathname === '/telegram-webhook' ||
+      pathname === '/telegram/webhook' ||
+      hasTelegramSecretHeader
+    ) {
       await handleTelegramWebhook(req, res);
       return;
     }
