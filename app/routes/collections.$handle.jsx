@@ -67,7 +67,7 @@ export default function Collection() {
               'Premium comfort essentials with elevated construction and clean silhouettes.'}
           </p>
         </div>
-        <img src="/brand/03-homepage-alt-monogram-clothes.png" alt="Collection campaign" />
+        <img src="/brand/09c-couple-campaign-cv-v-up.png" alt="Collection campaign" />
       </section>
 
       <PaginatedResourceSection

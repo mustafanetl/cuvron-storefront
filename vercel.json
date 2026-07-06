@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "node",
+  "buildCommand": "npm run build:vercel",
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/brand/(.*)",
+      "dest": "/brand/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.mjs"
+    }
+  ]
+}

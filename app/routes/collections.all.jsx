@@ -7,7 +7,7 @@ import {ProductItem} from '~/components/ProductItem';
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: `Hydrogen | Products`}];
+  return [{title: `CUVRON | Shop All`}];
 };
 
 /**
@@ -58,8 +58,22 @@ export default function Collection() {
   const {products} = useLoaderData();
 
   return (
-    <div className="collection">
-      <h1>Products</h1>
+    <div className="cuvron-collection-page">
+      <section className="cuvron-collection-hero">
+        <div>
+          <p className="cuvron-kicker">Shop All</p>
+          <h1>CUVRON Essentials</h1>
+          <p className="collection-description">
+            Full comfywear lineup including hoodies, tees, and pajama sets
+            built for daily wear with premium finishing and subtle monogram
+            branding.
+          </p>
+        </div>
+        <img
+          src="/brand/04c-product-lineup-cv-v-up.png"
+          alt="CUVRON full product lineup"
+        />
+      </section>
       <PaginatedResourceSection
         connection={products}
         resourcesClassName="products-grid"

@@ -85,7 +85,7 @@ export default function Product() {
     <div className="product cuvron-product-page">
       <div className="cuvron-product-gallery">
         <ProductImage image={selectedVariant?.image} />
-        <img src="/brand/05b-product-page-hoodie-cv.png" alt="Style detail" />
+        <img src="/brand/05c-product-page-hoodie-cv-v-up.png" alt="Style detail" />
       </div>
 
       <div className="product-main cuvron-product-main">

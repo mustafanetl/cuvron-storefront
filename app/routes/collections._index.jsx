@@ -3,6 +3,13 @@ import {getPaginationVariables, Image} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 
 /**
+ * @type {Route.MetaFunction}
+ */
+export const meta = () => {
+  return [{title: 'CUVRON | Collections'}];
+};
+
+/**
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
@@ -50,11 +57,21 @@ export default function Collections() {
   const {collections} = useLoaderData();
 
   return (
-    <div className="collections">
-      <h1>Collections</h1>
+    <div className="cuvron-collection-page">
+      <section className="cuvron-collection-hero">
+        <div>
+          <p className="cuvron-kicker">Collections</p>
+          <h1>Shop by Drop</h1>
+          <p className="collection-description">
+            Explore curated CUVRON capsules for men, women, and unisex comfort
+            essentials featuring our elevated CV monogram identity.
+          </p>
+        </div>
+        <img src="/brand/01c-cv-monogram-final-board.png" alt="CUVRON brand system" />
+      </section>
       <PaginatedResourceSection
         connection={collections}
-        resourcesClassName="collections-grid"
+        resourcesClassName="products-grid"
       >
         {({node: collection, index}) => (
           <CollectionItem
@@ -77,7 +94,7 @@ export default function Collections() {
 function CollectionItem({collection, index}) {
   return (
     <Link
-      className="collection-item"
+      className="cuvron-product-tile"
       key={collection.id}
       to={`/collections/${collection.handle}`}
       prefetch="intent"
@@ -91,7 +108,10 @@ function CollectionItem({collection, index}) {
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h5>{collection.title}</h5>
+      <div className="cuvron-product-tile-info">
+        <h4>{collection.title}</h4>
+        <p>Explore collection</p>
+      </div>
     </Link>
   );
 }

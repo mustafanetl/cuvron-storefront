@@ -3,7 +3,10 @@ node_modules
 /build
 /dist
 /public/build
+/public/assets
 /.mf
 .env
 .shopify
 .react-router
+
+.vercel

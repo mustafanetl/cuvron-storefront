@@ -1,4 +1,4 @@
-import {createHydrogenContext} from '@shopify/hydrogen';
+import {createHydrogenContext, InMemoryCache} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
 
@@ -10,6 +10,51 @@ const additionalContext = {
   // cms: await createCMSClient(env),
   // reviews: await createReviewsClient(env),
 };
+
+let fallbackCache;
+let hasWarnedMockStorefrontEnv = false;
+
+function withStorefrontEnvDefaults(env) {
+  const storeDomain = env?.PUBLIC_STORE_DOMAIN || 'mock.shop';
+  const storefrontToken =
+    env?.PUBLIC_STOREFRONT_API_TOKEN || 'abcdefghijklmnopqrstuvwxyz123456';
+  const checkoutDomain = env?.PUBLIC_CHECKOUT_DOMAIN || storeDomain;
+
+  if (
+    (!env?.PUBLIC_STORE_DOMAIN ||
+      !env?.PUBLIC_STOREFRONT_API_TOKEN ||
+      !env?.PUBLIC_CHECKOUT_DOMAIN) &&
+    !hasWarnedMockStorefrontEnv
+  ) {
+    hasWarnedMockStorefrontEnv = true;
+    console.warn(
+      '[CUVRON] Using fallback mock Shopify env values. Set PUBLIC_STORE_DOMAIN, PUBLIC_STOREFRONT_API_TOKEN, and PUBLIC_CHECKOUT_DOMAIN for real-store checkout.',
+    );
+  }
+
+  return {
+    ...env,
+    PUBLIC_STORE_DOMAIN: storeDomain,
+    PUBLIC_STOREFRONT_API_TOKEN: storefrontToken,
+    PUBLIC_CHECKOUT_DOMAIN: checkoutDomain,
+  };
+}
+
+/**
+ * Use the platform cache in worker runtimes, otherwise fall back to
+ * a process-level in-memory cache for Node runtimes (e.g. Vercel Functions).
+ */
+function getRuntimeCache() {
+  if (globalThis.caches?.open) {
+    return globalThis.caches.open('hydrogen');
+  }
+
+  if (!fallbackCache) {
+    fallbackCache = new InMemoryCache();
+  }
+
+  return Promise.resolve(fallbackCache);
+}
 
 /**
  * Creates Hydrogen context for React Router 7.9.x
@@ -30,15 +75,21 @@ export async function createHydrogenRouterContext(
     throw new Error('SESSION_SECRET environment variable is not set');
   }
 
-  const waitUntil = executionContext.waitUntil.bind(executionContext);
+  const runtimeEnv = withStorefrontEnvDefaults(env);
+
+  const waitUntil =
+    executionContext?.waitUntil?.bind(executionContext) ??
+    ((promise) => {
+      void promise;
+    });
   const [cache, session] = await Promise.all([
-    caches.open('hydrogen'),
+    getRuntimeCache(),
     AppSession.init(request, [env.SESSION_SECRET]),
   ]);
 
   const hydrogenContext = createHydrogenContext(
     {
-      env,
+      env: runtimeEnv,
       request,
       cache,
       waitUntil,

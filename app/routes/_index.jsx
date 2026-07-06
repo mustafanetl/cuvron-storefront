@@ -53,7 +53,7 @@ export default function Homepage() {
 
       <section className="cuvron-hero">
         <img
-          src="/brand/02b-homepage-hero-cv-logo-clothes.png"
+          src="/brand/02c-homepage-hero-cv-v-up.png"
           alt="CUVRON hero"
         />
       </section>
@@ -86,14 +86,14 @@ export default function Homepage() {
           </Link>
         </div>
         <img
-          src="/brand/09b-couple-campaign-cv-logo.png"
+          src="/brand/09c-couple-campaign-cv-v-up.png"
           alt="CUVRON couple campaign"
         />
       </section>
 
       <section className="cuvron-product-lineup-showcase">
         <img
-          src="/brand/04b-product-lineup-cv-only.png"
+          src="/brand/04c-product-lineup-cv-v-up.png"
           alt="CUVRON core product lineup"
         />
       </section>

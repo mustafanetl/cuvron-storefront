@@ -1,0 +1,20 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 120 120"
+  fill="none"
+  aria-label="CUVRON CV monogram"
+>
+  <path
+    d="M92 27A43 43 0 1 0 92 93"
+    stroke="#111111"
+    stroke-width="10"
+    stroke-linecap="round"
+  />
+  <path
+    d="M44 36L60 74L76 36"
+    stroke="#111111"
+    stroke-width="8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

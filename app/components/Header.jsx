@@ -22,7 +22,14 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}) {
       </div>
 
       <NavLink prefetch="intent" to="/" className="cuvron-brand" end>
-        <span className="cuvron-brand-wordmark">CUVRON</span>
+        <span className="cuvron-brand-main">
+          <img
+            src="/brand/cuvron-monogram.svg"
+            alt="CUVRON monogram"
+            className="cuvron-brand-monogram"
+          />
+          <span className="cuvron-brand-wordmark">CUVRON</span>
+        </span>
         <span className="cuvron-brand-sub">ESSENTIALS REDEFINED</span>
       </NavLink>
 
