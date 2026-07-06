@@ -4,12 +4,7 @@
   "buildCommand": "npm run build:vercel",
   "routes": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/brand/(.*)",
-      "dest": "/brand/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
