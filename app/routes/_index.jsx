@@ -1,38 +1,27 @@
-import {Await, useLoaderData, Link} from 'react-router';
+import {Await, Link, useLoaderData} from 'react-router';
 import {Suspense} from 'react';
-import {Image} from '@shopify/hydrogen';
-import {ProductItem} from '~/components/ProductItem';
+import {Money} from '@shopify/hydrogen';
 import {MockShopNotice} from '~/components/MockShopNotice';
 
 /**
  * @type {Route.MetaFunction}
  */
 export const meta = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: 'CUVRON | Premium Comfywear'}];
 };
 
 /**
  * @param {Route.LoaderArgs} args
  */
 export async function loader(args) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- * @param {Route.LoaderArgs}
- */
 async function loadCriticalData({context}) {
   const [{collections}] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
   return {
@@ -41,17 +30,10 @@ async function loadCriticalData({context}) {
   };
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- * @param {Route.LoaderArgs}
- */
 function loadDeferredData({context}) {
   const recommendedProducts = context.storefront
     .query(RECOMMENDED_PRODUCTS_QUERY)
     .catch((error) => {
-      // Log query errors, but don't throw them so the page can still render
       console.error(error);
       return null;
     });
@@ -64,61 +46,135 @@ function loadDeferredData({context}) {
 export default function Homepage() {
   /** @type {LoaderReturnData} */
   const data = useLoaderData();
+
   return (
-    <div className="home">
+    <div className="cuvron-home">
       {data.isShopLinked ? null : <MockShopNotice />}
-      <FeaturedCollection collection={data.featuredCollection} />
-      <RecommendedProducts products={data.recommendedProducts} />
-    </div>
-  );
-}
 
-/**
- * @param {{
- *   collection: FeaturedCollectionFragment;
- * }}
- */
-function FeaturedCollection({collection}) {
-  if (!collection) return null;
-  const image = collection?.image;
-  return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
+      <section className="cuvron-hero">
+        <img
+          src="/brand/02b-homepage-hero-cv-logo-clothes.png"
+          alt="CUVRON hero"
+        />
+      </section>
+
+      <section className="cuvron-category-tiles">
+        <Link to="/collections/all" className="cuvron-tile">
+          <span>Hoodies</span>
+          <small>Heavyweight comfort, premium finish</small>
+        </Link>
+        <Link to="/collections/all" className="cuvron-tile">
+          <span>T-Shirts</span>
+          <small>Soft everyday essentials with clean fits</small>
+        </Link>
+        <Link to="/collections/all" className="cuvron-tile">
+          <span>Pajamas</span>
+          <small>Elevated sleepwear made to be seen</small>
+        </Link>
+      </section>
+
+      <section className="cuvron-home-split">
+        <div>
+          <p className="cuvron-kicker">Campaign</p>
+          <h2>Designed for slow mornings and late nights.</h2>
+          <p>
+            CUVRON blends relaxed silhouettes with luxury-level execution. Our
+            core pieces are built for repeat wear and high comfort.
+          </p>
+          <Link to="/collections/all" className="cuvron-button-dark">
+            Shop the Collection
+          </Link>
         </div>
-      )}
-      <h1>{collection.title}</h1>
-    </Link>
-  );
-}
+        <img
+          src="/brand/09b-couple-campaign-cv-logo.png"
+          alt="CUVRON couple campaign"
+        />
+      </section>
 
-/**
- * @param {{
- *   products: Promise<RecommendedProductsQuery | null>;
- * }}
- */
-function RecommendedProducts({products}) {
-  return (
-    <div className="recommended-products">
-      <h2>Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Await resolve={products}>
-          {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <ProductItem key={product.id} product={product} />
-                  ))
-                : null}
-            </div>
-          )}
-        </Await>
-      </Suspense>
-      <br />
+      <section className="cuvron-product-lineup-showcase">
+        <img
+          src="/brand/04b-product-lineup-cv-only.png"
+          alt="CUVRON core product lineup"
+        />
+      </section>
+
+      <section className="cuvron-recommended">
+        <div className="cuvron-section-head">
+          <p className="cuvron-kicker">Best Sellers</p>
+          <h2>Shop customer favorites</h2>
+        </div>
+
+        <Suspense fallback={<div>Loading products...</div>}>
+          <Await resolve={data.recommendedProducts}>
+            {(response) => (
+              <div className="cuvron-product-grid">
+                {response
+                  ? response.products.nodes.map((product) => (
+                      <Link
+                        className="cuvron-product-card"
+                        key={product.id}
+                        prefetch="intent"
+                        to={`/products/${product.handle}`}
+                      >
+                        {product.featuredImage ? (
+                          <img
+                            src={product.featuredImage.url}
+                            alt={product.featuredImage.altText || product.title}
+                            loading="lazy"
+                          />
+                        ) : null}
+                        <h3>{product.title}</h3>
+                        <span>
+                          <Money data={product.priceRange.minVariantPrice} />
+                        </span>
+                      </Link>
+                    ))
+                  : null}
+              </div>
+            )}
+          </Await>
+        </Suspense>
+      </section>
+
+      <section className="cuvron-lifestyle-grid">
+        <img src="/brand/12-lookbook-male-campaign.png" alt="Male campaign" />
+        <img
+          src="/brand/13-lookbook-female-campaign.png"
+          alt="Female campaign"
+        />
+        <img src="/brand/16-night-street-outer-look.png" alt="Night campaign" />
+      </section>
+
+      <section className="cuvron-trust-bar">
+        <div>
+          <h4>Premium quality</h4>
+          <p>Fabric-first construction and tested comfort.</p>
+        </div>
+        <div>
+          <h4>Fast EU shipping</h4>
+          <p>Reliable delivery and easy returns.</p>
+        </div>
+        <div>
+          <h4>Secure checkout</h4>
+          <p>Built for smooth conversion and payment trust.</p>
+        </div>
+      </section>
+
+      <section className="cuvron-packaging-block">
+        <img src="/brand/18-packaging-unboxing.png" alt="CUVRON packaging" />
+      </section>
+
+      {data.featuredCollection ? (
+        <section className="cuvron-collection-cta">
+          <div>
+            <p className="cuvron-kicker">Collection Spotlight</p>
+            <h2>{data.featuredCollection.title}</h2>
+            <Link to={`/collections/${data.featuredCollection.handle}`}>
+              Explore collection
+            </Link>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
@@ -165,9 +221,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       height
     }
   }
-  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query RecommendedProducts($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 4, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 8, sortKey: BEST_SELLING) {
       nodes {
         ...RecommendedProduct
       }
@@ -176,6 +232,4 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
 `;
 
 /** @typedef {import('./+types/_index').Route} Route */
-/** @typedef {import('storefrontapi.generated').FeaturedCollectionFragment} FeaturedCollectionFragment */
-/** @typedef {import('storefrontapi.generated').RecommendedProductsQuery} RecommendedProductsQuery */
 /** @typedef {import('@shopify/remix-oxygen').SerializeFrom<typeof loader>} LoaderReturnData */

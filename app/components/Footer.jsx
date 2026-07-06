@@ -9,14 +9,45 @@ export function Footer({footer: footerPromise, header, publicStoreDomain}) {
     <Suspense>
       <Await resolve={footerPromise}>
         {(footer) => (
-          <footer className="footer">
-            {footer?.menu && header.shop.primaryDomain?.url && (
+          <footer className="footer cuvron-footer">
+            <div className="cuvron-footer-top">
+              <div>
+                <p className="cuvron-footer-kicker">CUVRON</p>
+                <h3>Refined comfort for real life.</h3>
+                <p>
+                  Premium hoodies, tees, and pajama sets designed for daily wear,
+                  travel, and evenings out.
+                </p>
+              </div>
+              <div>
+                <p className="cuvron-footer-kicker">Support</p>
+                <ul className="cuvron-footer-list">
+                  <li>Fast EU shipping</li>
+                  <li>Easy returns</li>
+                  <li>Secure checkout</li>
+                </ul>
+              </div>
+              <div>
+                <p className="cuvron-footer-kicker">Newsletter</p>
+                <p>Get launch drops, restocks, and early access.</p>
+                <a className="cuvron-footer-cta" href="mailto:hello@cuvron.com">
+                  hello@cuvron.com
+                </a>
+              </div>
+            </div>
+
+            {footer?.menu && header.shop.primaryDomain?.url ? (
               <FooterMenu
                 menu={footer.menu}
                 primaryDomainUrl={header.shop.primaryDomain.url}
                 publicStoreDomain={publicStoreDomain}
               />
-            )}
+            ) : null}
+
+            <div className="cuvron-footer-bottom">
+              <span>Copyright {new Date().getFullYear()} CUVRON</span>
+              <span>Designed in Europe</span>
+            </div>
           </footer>
         )}
       </Await>
@@ -36,26 +67,21 @@ function FooterMenu({menu, primaryDomainUrl, publicStoreDomain}) {
     <nav className="footer-menu" role="navigation">
       {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
         if (!item.url) return null;
-        // if the url is internal, we strip the domain
+
         const url =
           item.url.includes('myshopify.com') ||
           item.url.includes(publicStoreDomain) ||
           item.url.includes(primaryDomainUrl)
             ? new URL(item.url).pathname
             : item.url;
+
         const isExternal = !url.startsWith('/');
         return isExternal ? (
           <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
             {item.title}
           </a>
         ) : (
-          <NavLink
-            end
-            key={item.id}
-            prefetch="intent"
-            style={activeLinkStyle}
-            to={url}
-          >
+          <NavLink end key={item.id} prefetch="intent" to={url}>
             {item.title}
           </NavLink>
         );
@@ -105,19 +131,6 @@ const FALLBACK_FOOTER_MENU = {
     },
   ],
 };
-
-/**
- * @param {{
- *   isActive: boolean;
- *   isPending: boolean;
- * }}
- */
-function activeLinkStyle({isActive, isPending}) {
-  return {
-    fontWeight: isActive ? 'bold' : undefined,
-    color: isPending ? 'grey' : 'white',
-  };
-}
 
 /**
  * @typedef {Object} FooterProps
