@@ -69,7 +69,7 @@ vercel --prod
 
 Telegram webhook endpoint:
 
-- `POST /api/telegram-webhook`
+- `POST /telegram-webhook`
 - Optional security header check with `TELEGRAM_WEBHOOK_SECRET` (`x-telegram-bot-api-secret-token`)
 
 After deployment, point your Telegram bot webhook to:
@@ -77,7 +77,7 @@ After deployment, point your Telegram bot webhook to:
 ```bash
 curl -X POST "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/setWebhook" \
   -H "Content-Type: application/json" \
-  -d '{"url":"https://<your-vercel-domain>/api/telegram-webhook","secret_token":"<TELEGRAM_WEBHOOK_SECRET>"}'
+  -d '{"url":"https://<your-vercel-domain>/telegram-webhook","secret_token":"<TELEGRAM_WEBHOOK_SECRET>"}'
 ```
 
 ## Shopify production wiring checklist
