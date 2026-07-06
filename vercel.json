@@ -4,6 +4,10 @@
   "buildCommand": "npm run build:vercel",
   "routes": [
     {
+      "src": "/api/telegram-webhook",
+      "dest": "/api/telegram-webhook.mjs"
+    },
+    {
       "handle": "filesystem"
     },
     {
